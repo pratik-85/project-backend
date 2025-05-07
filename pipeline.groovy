@@ -16,14 +16,22 @@ pipeline {
 
         stage("Deploy-K8S") {
             steps {
-                sh '''
-                    docker build -t pratiik/project-backend-img:latest .
-                    docker push pratiik/project-backend-img:latest
-                    docker rmi pratiik/project-backend-img:latest
-                    kubectl apply -f ./deploy/
-                '''
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
+                        docker build . -t pratiik/project-backend-img:latest
+                        docker push pratiik/project-backend-img:latest
+                        docker rmi pratiik/project-backend-img:latest
+                        kubectl apply -f ./deploy/
+                    '''
+                }
             }
         }
     }
 }
+
 
