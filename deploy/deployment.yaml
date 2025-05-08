@@ -13,7 +13,7 @@ spec:
         app: backend-app
     spec:
       containers:
-        - name: project-backend
+        - name: backend-app
           image: pratiik/project-backend-img:latest
           ports:
             - containerPort: 8080
